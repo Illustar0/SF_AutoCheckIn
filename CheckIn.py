@@ -56,5 +56,6 @@ def task():
             read()
             requests.put('https://api.sfacg.com/user/tasks/' + str(task["data"][n]["taskId"]), headers=headers)
             print(response.text)
+        n=n+1
 checkin()
 task()
