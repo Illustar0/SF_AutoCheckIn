@@ -13,8 +13,10 @@ headers = {
     'authorization': 'Basic YW5kcm9pZHVzZXI6MWEjJDUxLXl0Njk7KkFjdkBxeHE=',
     'accept': 'application/vnd.sfacg.api+json;version=1',
     'user-agent': 'boluobao/4.6.36(android;22)/OPPO',
-    'sfsecurity': 'nonce=EE94F4D4-CC0B-43B6-BFF2-6CB72CE8698B&timestamp=' + str(int(timestamp)) + '&devicetoken=F632BBEC-F075-39B5-A2C8-3234F5CBF99D&sign=7778A67648C9D95483E466D9D341FEA1',
-    'accept-encoding': 'gzip',}
+    'sfsecurity': f'nonce=EE94F4D4-CC0B-43B6-BFF2-6CB72CE8698B&timestamp={int(timestamp)}&devicetoken=F632BBEC-F075-39B5-A2C8-3234F5CBF99D&sign=7778A67648C9D95483E466D9D341FEA1',
+    'accept-encoding': 'gzip',
+}
+
 
 
 # 创建cookie.txt文本
@@ -30,8 +32,7 @@ def read_cookie():
         
 def postrequests(api, headers, data):
     read_cookie()
-    post_responed = requests.post(api, headers=headers, data=data).json()
-    return post_responed
+    return requests.post(api, headers=headers, data=data).json()
     
 def getrequests(api):
     read_cookie()
@@ -58,12 +59,12 @@ def task():
     }
     ReadData = json.dumps(ReadTime)
     ListenData = json.dumps(ListenTime)
-    
+
     result = getrequests("https://api.sfacg.com/user/signInfo")
     print(result['status']['msg'])
-    if '需要登录才能访问该资源' == result['status']['msg']:
+    if result['status']['msg'] == '需要登录才能访问该资源':
         return result['status']['msg']
-    if '签到系统在每日凌晨0~1点之间进行维护,请您选在其他时间签到哦' == result['status']['msg']:
+    if result['status']['msg'] == '签到系统在每日凌晨0~1点之间进行维护,请您选在其他时间签到哦':
         return result['status']['msg']
     if result['status']['msg'] == '您今天已经签过到了,请明天再来':
         return result['status']['msg']
@@ -76,7 +77,7 @@ def task():
     postrequests('https://api.sfacg.com/user/tasks/4', headers,data=ListenData)
     postrequests('https://api.sfacg.com/user/tasks/5', headers,data=ListenData)
     postrequests('https://api.sfacg.com/user/tasks/17', headers, data=ListenData)
-    for i in range(3):
+    for _ in range(3):
         r = putrequests('https://api.sfacg.com/user/readingtime', put_headers, ReadData)
         print(r)
         time.sleep(0.5)
@@ -97,13 +98,14 @@ def check_cookie():  # 验证cookie信息是否失效
         print("账号名称:", nick_Name, "\t火卷余额:", fireMoneyRemain, "\tVIP:", user_vipLevel)
         print("Cookie 凭证有效！")
     except:
-        print('Cookie凭证失效  httpCode:',str(result['status']['httpCode']))
+        print('Cookie凭证失效  httpCode:', result['status']['httpCode'])
         session_APP = input("Please input you session_APP:")
         SFCommunity = input("Please input you SFCommunity:")
-        cookie = "session_APP={};.SFCommunity={}".format(session_APP, SFCommunity)
+        cookie = f"session_APP={session_APP};.SFCommunity={SFCommunity}"
         with open("cookie.txt", 'w', encoding='utf-8') as file:
             file.write(cookie)
-        print("退出程序");quit()
+        print("退出程序")
+        quit()
 
 
 
