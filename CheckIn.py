@@ -59,8 +59,11 @@ def task():
     }
     ReadData = json.dumps(ReadTime)
     ListenData = json.dumps(ListenTime)
-
-    result = getrequests("https://api.sfacg.com/user/signInfo")
+    put_headers = headers
+    put_headers['accept-encoding'] = 'gzip'
+    put_headers['content-length'] = '57'
+    put_headers['content-type'] = 'application/json; charset=UTF-8'
+    result = putrequests("https://api.sfacg.com/user/newSignInfo",put_headers,ReadData)
     print(result['status']['msg'])
     if result['status']['msg'] == '需要登录才能访问该资源':
         return result['status']['msg']
@@ -68,10 +71,7 @@ def task():
         return result['status']['msg']
     if result['status']['msg'] == '您今天已经签过到了,请明天再来':
         return result['status']['msg']
-    put_headers = headers
-    put_headers['accept-encoding'] = 'gzip'
-    put_headers['content-length'] = '57'
-    put_headers['content-type'] = 'application/json; charset=UTF-8'
+
     print("开始执行任务")
     responed = putrequests('https://api.sfacg.com/user/readingtime', put_headers, data=ListenData)
     postrequests('https://api.sfacg.com/user/tasks/4', headers,data=ListenData)
