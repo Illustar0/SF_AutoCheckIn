@@ -61,7 +61,8 @@ def task():
     ListenData = json.dumps(ListenTime)
     put_headers = headers
     put_headers['accept-encoding'] = 'gzip'
-    put_headers['content-length'] = '57'
+    # put_headers['content-length'] = '57'
+    # 不再对 content-length 进行硬编码
     put_headers['content-type'] = 'application/json; charset=UTF-8'
     result = putrequests("https://api.sfacg.com/user/newSignInfo",put_headers,ReadData)
     print(result['status']['msg'])
